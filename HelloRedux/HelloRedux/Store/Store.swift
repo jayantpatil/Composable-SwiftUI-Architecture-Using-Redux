@@ -14,16 +14,31 @@ struct State {
     var counter: Int = 0
 }
 
+struct IncrementAction: Action {}
+
 func reducer(_ state: State, _ action: Action) -> State {
-    state
+    var state = state
+    switch action {
+    case _ as IncrementAction:
+        state.counter += 1
+
+    default:
+        break
+    }
+
+    return state
 }
 
-class Store {
+class Store: ObservableObject {
     var reducer: Reducer
-    var state: State
+    @Published var state: State
 
     init(reducer: @escaping Reducer, state: State) {
         self.reducer = reducer
         self.state = state
+    }
+
+    func dispatch(action: Action) {
+        state = reducer(state, action)
     }
 }
